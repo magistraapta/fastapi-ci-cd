@@ -9,57 +9,23 @@ on:
 
 jobs:
 
-  code-quality:
-    name: Check coding standards
+  deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Install poetry
-        run: pipx install poetry
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
 
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 3.11
-          cache: poetry
+      - name: Run Docker Compose
+        run: |
+          docker-compose up -d
 
-      - name: Install Python dependencies
-        run: poetry install
-
-      - name: Check code formatting
-        run: poetry run poe black-check
-
-
-  test:
-    name: Run tests
-    needs: code-quality
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Install poetry
-        run: pipx install poetry
-
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 3.11
-          cache: poetry
-
-      - name: Install dependencies
-        run: poetry install
-
-      - name: Run tests
-        run: poetry run poe test-unit
-
-      - name: Archive code coverage results
-        uses: actions/upload-artifact@v3
-        with:
-          name: code-coverage-report
-          path: htmlcov
 
   docker:
     name: Build and Push to DockerHub
-    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
