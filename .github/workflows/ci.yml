@@ -25,15 +25,11 @@ jobs:
 
     # Step 3: Install dependencies
     - name: Install dependencies
-      run: |
-        python -m venv venv
-        venv/bin/pip install --upgrade pip
-        venv/bin/pip install -r requirements.txt
+      run: pip install -r requirements.txt
 
     # Step 4: Run tests
     - name: Run tests in test folder
-      run: |
-        venv/bin/python -m pytest test --verbose
+      run: pytest
 
   docker:
     runs-on: ubuntu-latest
